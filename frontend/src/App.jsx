@@ -1,25 +1,24 @@
 import { Container } from 'react-bootstrap';
-
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomeScreen from './screens/HomeScreen';
+import ProductScreen from './screens/ProductScreen';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className='App'>
-      <div>
-        <Header />
-        <main className='py-3'>
-          <constainer>
-            <HomeScreen />
-          </constainer>
-        </main>
-        <Footer />
-      </div>
-    </div>
+    <Router>
+      <Header />
+      <main className='py-3'>
+        <Container>
+          <Routes>
+            <Route path='/' element={<HomeScreen />} />
+            <Route path='/product/:id' element={<ProductScreen />} />
+          </Routes>
+        </Container>
+      </main>
+      <Footer />
+    </Router>
   );
 }
 
