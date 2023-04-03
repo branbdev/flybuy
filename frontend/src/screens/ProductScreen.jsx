@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Row,
@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import Rating from '../components/Rating';
 import products from '../products';
+import axios from 'axios';
 
 function ProductScreen({ match }) {
   const product = products.find((p) => p._id === match.params.id);
