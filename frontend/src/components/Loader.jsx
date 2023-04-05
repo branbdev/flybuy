@@ -6,6 +6,7 @@ function Loader() {
     <Spinner
       animation='border'
       role='status'
+      //using double curly braces for inline style
       style={{
         height: '100px',
         width: '100px',

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Row,
@@ -10,14 +11,53 @@ import {
   Form,
 } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import products from '../products';
-import axios from 'axios';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { listProductDetails } from '../actions/productActions';
 
-function ProductScreen({ match }) {
-  const product = products.find((p) => p._id === match.params.id);
-  if (!product) {
-    return <h2>Product not found</h2>;
-  }
+function ProductScreen({ match, history }) {
+  const [qty, setQty] = useState(1);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+
+  const dispatch = useDispatch();
+
+  const productDetails = useSelector((state) => state.productDetails);
+  const { loading, error, product } = productDetails;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const productReviewCreate = useSelector((state) => state.productReviewCreate);
+  const {
+    loading: loadingProductReview,
+    error: errorProductReview,
+    success: successProductReview,
+  } = productReviewCreate;
+
+  useEffect(() => {
+    if (successProductReview) {
+      setRating(0);
+      setComment('');
+      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
+    }
+
+    dispatch(listProductDetails(match.params.id));
+  }, [dispatch, match, successProductReview]);
+
+  const addToCartHandler = () => {
+    history.push(`/cart/${match.params.id}?qty=${qty}`);
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(
+      createProductReview(match.params.id, {
+        rating,
+        comment,
+      })
+    );
+  };
   return (
     <div>
       <Link to='/' className='btn btn-light my-3'>
@@ -75,7 +115,7 @@ function ProductScreen({ match }) {
                       </Col>
                     </Row>
                   </ListGroup.Item>
-
+                  {/* Prevents user from selecting anything if item is not in stock */}
                   {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
@@ -85,6 +125,7 @@ function ProductScreen({ match }) {
                             as='select'
                             value={qty}
                             onChange={(e) => setQty(e.target.value)}>
+                            {/* create array out of countInStock, map through it, create option with key and value set to +1 for each iteration. x is the current count. */}
                             {[...Array(product.countInStock).keys()].map(
                               (x) => (
                                 <option key={x + 1} value={x + 1}>
