@@ -13,7 +13,11 @@ import {
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { listProductDetails } from '../actions/productActions';
+import {
+  listProductDetails,
+  createProductReview,
+} from '../actions/productActions';
+import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants';
 
 function ProductScreen({ match, history }) {
   const [qty, setQty] = useState(1);
@@ -115,7 +119,7 @@ function ProductScreen({ match, history }) {
                       </Col>
                     </Row>
                   </ListGroup.Item>
-                  {/* Prevents user from selecting anything if item is not in stock */}
+
                   {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
@@ -125,7 +129,6 @@ function ProductScreen({ match, history }) {
                             as='select'
                             value={qty}
                             onChange={(e) => setQty(e.target.value)}>
-                            {/* create array out of countInStock, map through it, create option with key and value set to +1 for each iteration. x is the current count. */}
                             {[...Array(product.countInStock).keys()].map(
                               (x) => (
                                 <option key={x + 1} value={x + 1}>
